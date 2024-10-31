@@ -1,0 +1,82 @@
+Please follow the below instructions
+
+
+
+Need to install mysql to the machine
+Data entered in mysql
+
+DDL
+
+CREATE TABLE service_operator (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE customer (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    contact_details VARCHAR(255)
+);
+
+CREATE TABLE appointment (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    customer_id BIGINT NOT NULL,
+    service_operator_id BIGINT NOT NULL,
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE,
+    FOREIGN KEY (service_operator_id) REFERENCES service_operator(id) ON DELETE CASCADE
+);
+
+DMLs
+INSERT INTO customer (id, name, contact_details) VALUES
+(123, 'Customer One', 'customer1@example.com'),
+(456, 'Customer Two', 'customer2@example.com'),
+(789, 'Customer Three', 'customer3@example.com');
+
+INSERT INTO service_operator (id, name) VALUES
+(1, 'Operator One'),
+(2, 'Operator Two'),
+(3, 'Operator Three');
+
+
+
+
+
+
+
+
+
+
+Samples to Run
+1. Request to book a time slot for a operator
+curl --location 'http://localhost:8080/api/appointments/book' \
+--header 'Content-Type: application/json' \
+--data '{
+    "customerId": 123,
+    "operatorId": 1,
+    "startTime": "2024-10-21T18:30:45"
+}
+'
+
+2. Request to fetch open slots for an operator
+curl --location 'http://localhost:8080/api/appointments/operator/1/open-slots?date=2024-10-21'
+
+3. View booked appointment for an operator.
+
+curl --location 'http://localhost:8080/api/appointments/operator/1/booked'
+
+4. Cancel the booked appointment
+curl --location --request DELETE 'http://localhost:8080/api/appointments/3
+
+5. Reschedule appointment
+curl --location --request PUT 'http://localhost:8080/api/appointments/2/reschedule' \
+--header 'Content-Type: application/json' \
+--data '{
+    "newTime" : "2024-10-20T16:30:45"
+}'
+
+
+To build the service
+mvn clean install -Dmaven.test.skip=true
